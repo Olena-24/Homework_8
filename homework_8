@@ -1,0 +1,61 @@
+from datetime import date, datetime, timedelta
+def get_birthdays_per_week(users):
+    if not users:
+        return {}
+    new_users = {'Monday': [], 'Tuesday': [], 'Wednesday': [], 'Thursday': [], 'Friday': []}
+    today = date.today()
+    # today = datetime(year=2023, month=11, day=15, hour=12)
+    today_year = today.year
+    today_month = today.month
+    today_week = today.weekday()
+    today_day = today.day
+    last_day_of_next_week = today + timedelta(days=7)
+    # finish_date_of_next_week = last_day_of_next_week.date()
+    for user in users:
+        name = user['name'].split()
+        name = name[0]
+        birthday_date = user['birthday']
+        new_birthday_date = birthday_date.replace(year=today_year)
+        if new_birthday_date < today:
+            new_birthday_date = new_birthday_date.replace(year=today_year + 1)
+        birthday_date_day = new_birthday_date.weekday()
+        if today <= new_birthday_date <= last_day_of_next_week:      # <= finish_date_of_next_week
+            if birthday_date_day in [0,5,6]:
+                new_users['Monday'].append(name)
+            elif birthday_date_day == 1:
+                new_users['Tuesday'].append(name)
+            elif birthday_date_day == 2:
+                new_users['Wednesday'].append(name)
+            elif birthday_date_day == 3:
+                new_users['Thursday'].append(name)
+            elif birthday_date_day == 4:
+                new_users['Friday'].append(name)
+            else:
+                continue
+    b = {}
+    for key, value in new_users.items():
+        if len(value) > 0:
+            b[key] = value
+    new_users = b
+    return new_users
+
+if __name__ == "__main__":
+    users = [
+        {'name': 'Jan Koum', 'birthday': datetime(1976, 1, 1).date()},
+        {'name': 'Masha Sheyn', 'birthday': datetime(1988, 12, 31).date()},
+        {'name': 'Olya Fyrsa', 'birthday': datetime(1956, 1, 2).date()},
+        {'name': 'Kolya Barna', 'birthday': datetime(1977, 11, 15).date()},
+        {'name': 'Sophia Gorban', 'birthday': datetime(1985, 11, 17).date()},
+        {'name': 'Solomia Kryshlnutska', 'birthday': datetime(1934, 11, 13).date()},
+        {'name': 'Sasha Ryabceva', 'birthday': datetime(1955, 11, 15).date()},
+        {'name': 'Pasha Ostanin', 'birthday': datetime(1945, 11, 17).date()},
+        {'name': 'Oksana Kyluk', 'birthday': datetime(1979, 11, 19).date()},
+        {'name': 'Bohdan Tumchenko', 'birthday': datetime(1979, 11, 21).date()},
+        {'name': 'Liza Protasova', 'birthday': datetime(1995, 11, 23).date()},
+    ]
+
+    result = get_birthdays_per_week(users)
+    print(result)
+    # Виводимо результат
+    for day_name, names in result.items():
+        print(f"{day_name}: {', '.join(names)}")
